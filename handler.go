@@ -12,19 +12,20 @@ import (
 )
 
 var (
+	GCS_BUCKET     = os.Getenv("GCS_BUCKET")
 	MG_SIGNING_KEY = os.Getenv("MG_SIGNING_KEY")
 	MG_API_KEY     = os.Getenv("MG_API_KEY")
 	MG_SENDER      = os.Getenv("MG_SENDER")
 	MG_RECIPIENT   = os.Getenv("MG_RECIPIENT")
 
-	recognizer = gcp.New()
+	recognizer = gcp.New(GCS_BUCKET)
 	arrival    = mgArr.New(MG_SIGNING_KEY)
 	departure  = mgDep.New(MG_API_KEY, MG_SENDER, MG_RECIPIENT)
 )
 
 func Handle(w http.ResponseWriter, r *http.Request) {
 	if err := handle(r); err != nil {
-		log.Println(err)
+		log.Printf("handling error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
